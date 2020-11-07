@@ -15,7 +15,12 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-    const extSockets = io.
+    const extSocket = activeSockets.find(extSocket => extSocket === socket.id)
+
+    if (!extSocket) activeSockets.push(socket.id);
+
+
+    socket.emit("update-user-list", ())
 })
 
 server.listen(port, () => {
