@@ -1,29 +1,49 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from 'socket.io';
+import { Server } from "socket.io";
 
-const app = express();
-const server = createServer(app);
-const port = 8000
-
-const io = new Server(server);
-
+const io = new Server();
 const activeSockets: string[] = []
-
-app.get("/", (req, res) => {
-    res.send(`<h1>Hello World</h1>`);
-});
+io.listen(4000);
 
 io.on("connection", (socket) => {
-    const extSocket = activeSockets.find(extSocket => extSocket === socket.id)
+    const existingSocket = activeSockets.find(
+        existingSocket => existingSocket === socket.id
+    );
 
-    if (!extSocket) activeSockets.push(socket.id);
+    if (!existingSocket) {
+        activeSockets.push(socket.id)
+
+        socket.emit("update-user-list", {
+            users: activeSockets.filter(
+                existingSocket => existingSocket !== socket.id
+            )
+        })
+
+        socket.broadcast.emit("update-user-list", {
+            users: [socket.id]
+        })
+    }
+    socket.on("call-user", (data: any) => {
+        socket.to(data.to).emit("call-made", {
+            offer: data.offer,
+            socket: socket.id
+        });
+    });
 
 
-    socket.emit("update-user-list", ())
 })
 
-server.listen(port, () => {
-    console.log(`Server listening on port:${port}`);
 
-})
+
+/* import WebSocket from 'ws'
+
+const wss = new WebSocket.Server({ port: 8080 })
+
+wss.on('connection', ws => {
+    console.log("yolo");
+
+    ws.on('message', message => {
+        console.log(`Received message => ${message}`)
+    })
+    ws.send('ho!')
+}) */
+
