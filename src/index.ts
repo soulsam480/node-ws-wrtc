@@ -1,9 +1,17 @@
 import { Server } from "socket.io";
+import express from "express";
 
-const io = new Server();
+const PORT = process.env.PORT || 3000;
+
+const app = express()
+
+const server = app.use("/", (req, res) => res.send("<p>connected</p>")).listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = new Server(server);
+
+
 let activeSockets: string[] = []
 
-io.listen(3000);
 
 io.on("connection", (socket) => {
     const existingSocket = activeSockets.find(
@@ -36,9 +44,9 @@ io.on("connection", (socket) => {
             answer: data.answer
         });
     });
-    socket.on("text-data", (data: any) => {
-        console.log(data.text)
-    })
+    /*     socket.on("text-data", (data: any) => {
+            console.log(data.text)
+        }) */
 
     socket.on("disconnect", () => {
         activeSockets = activeSockets.filter(
@@ -52,17 +60,11 @@ io.on("connection", (socket) => {
 })
 
 
-
-/* import WebSocket from 'ws'
-
-const wss = new WebSocket.Server({ port: 8080 })
-
-wss.on('connection', ws => {
-    console.log("yolo");
-
-    ws.on('message', message => {
-        console.log(`Received message => ${message}`)
-    })
-    ws.send('ho!')
-}) */
-
+process.on("uncaughtException", e => {
+    console.log(e);
+    process.exit(1);
+});
+process.on("unhandledRejection", e => {
+    console.log(e);
+    process.exit(1);
+});
