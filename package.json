@@ -5,7 +5,7 @@
   "main": ".pnp.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "serve": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc src/index.ts"
   },
   "keywords": [],
