@@ -54,6 +54,13 @@ io.on('connection', (socket: Socket) => {
     });
   });
 
+  socket.on('make-rejection', (data: any) => {
+    socket.to(data.to).emit('rejected', {
+      socket: socket.id,
+      user: data.user,
+    });
+  });
+
   socket.on('disconnect', () => {
     activeSockets = activeSockets.filter(
       (existingSocket) => existingSocket.id !== socket.id,
