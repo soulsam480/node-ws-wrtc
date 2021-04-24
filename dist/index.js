@@ -40,6 +40,12 @@ io.on('connection', (socket) => {
             user: data.user,
         });
     });
+    socket.on('make-rejection', (data) => {
+        socket.to(data.to).emit('rejected', {
+            socket: socket.id,
+            user: data.user,
+        });
+    });
     socket.on('disconnect', () => {
         activeSockets = activeSockets.filter((existingSocket) => existingSocket.id !== socket.id);
         socket.broadcast.emit('remove-user', {
@@ -55,4 +61,3 @@ process.on('unhandledRejection', (e) => {
     console.log(e);
     process.exit(1);
 });
-//# sourceMappingURL=index.js.map
